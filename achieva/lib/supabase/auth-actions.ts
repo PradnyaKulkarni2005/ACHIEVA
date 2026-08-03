@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
-export type AuthRole = 'Student' | 'Faculty' | 'Admin'
+export type AuthRole = 'student' | 'faculty' | 'admin'
 
 export interface SignupFormData {
   full_name: string
@@ -17,26 +17,22 @@ export interface SignupFormData {
 }
 
 function normalizeRole(role: string): AuthRole {
-  const normalizedRole = role?.toLowerCase()
-
-  if (normalizedRole === 'faculty') {
-    return 'Faculty'
+  switch (role.toLowerCase()) {
+    case "faculty":
+      return "faculty";
+    case "admin":
+      return "admin";
+    default:
+      return "student";
   }
-
-  if (normalizedRole === 'admin') {
-    return 'Admin'
-  }
-
-  return 'Student'
 }
-
 function getRedirectPath(role: AuthRole | string) {
   const normalizedRole = normalizeRole(role)
 
   switch (normalizedRole) {
-    case 'Faculty':
+    case 'faculty':
       return '/faculty'
-    case 'Admin':
+    case 'admin':
       return '/admin/dashboard'
     default:
       return '/student'
@@ -68,24 +64,15 @@ export async function signUpAction(formData: SignupFormData) {
     return { success: false, message: 'Signup succeeded but no user was created.' }
   }
 
-  const profilePayload = {
-    id: data.user.id,
-    full_name: formData.full_name,
-    email: formData.email,
-    role: normalizeRole(formData.role),
-    department: formData.department,
-    branch: formData.branch,
-    year: formData.year,
-  }
+  
 
-  const { error: profileError } = await supabase.from('profiles').upsert(profilePayload, { onConflict: 'id' })
-
-  if (profileError) {
-    return { success: false, message: profileError.message }
-  }
 
   revalidatePath('/')
-  redirect(getRedirectPath(normalizeRole(formData.role)))
+
+  return {
+    success: true,
+    message: 'Account created successfully. Please verify your email before signing in.',
+  }
 }
 
 export async function signInAction(formData: { email: string; password: string }) {
