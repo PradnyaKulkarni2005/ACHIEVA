@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Award, CheckCircle, FileCheck, GraduationCap, Shield, Sparkles, TrendingUp, Users } from "lucide-react";
 import Link from "next/link";
+import { signOutAction } from '@/lib/supabase/auth-actions';
 
 export default function Home() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
@@ -102,24 +103,34 @@ export default function Home() {
           faculty validate achievements, and institutions create career-ready professionals.
         </p>
         
-        <div className="flex justify-center gap-4 mb-16">
-          <Link href="/student">
+        <div className="flex flex-wrap justify-center gap-4 mb-16">
+          <Link href="/auth/signup">
             <Button 
               size="lg" 
               className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-6 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all"
             >
-              Student Dashboard
+              Create Account
             </Button>
           </Link>
-          <Link href="/faculty">
+          <Link href="/auth/login">
             <Button 
               size="lg" 
               variant="outline" 
               className="border-slate-300 text-slate-900 hover:bg-slate-50 px-8 py-6 text-lg rounded-lg"
             >
-              Faculty Dashboard
+              Sign In
             </Button>
           </Link>
+          <form action={signOutAction}>
+            <Button 
+              type="submit"
+              size="lg" 
+              variant="ghost"
+              className="px-8 py-6 text-lg rounded-lg"
+            >
+              Logout
+            </Button>
+          </form>
         </div>
 
         {/* Stats */}
