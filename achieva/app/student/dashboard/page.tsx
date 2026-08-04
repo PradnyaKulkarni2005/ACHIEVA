@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import Sidebar from '@/components/Sidebar';
 import { createClient } from '@/lib/supabase/client';
 import { getStudentDashboardData, type StudentDashboardData } from '@/lib/supabase/services/student-dashboard';
+import AchievementTable from '@/components/AchievementTable';
 import {
   Award,
   Upload,
@@ -220,6 +221,8 @@ export default function StudentDashboard() {
               </div>
             </CardContent>
           </Card>
+
+          <AchievementTable />
 
           <Card className="border-slate-200 shadow-sm">
             <CardHeader className="border-b border-slate-100">

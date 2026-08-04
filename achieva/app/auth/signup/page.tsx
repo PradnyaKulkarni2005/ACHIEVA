@@ -12,7 +12,7 @@ const initialState: SignupFormData = {
   full_name: '',
   email: '',
   password: '',
-  role: 'Student',
+  role: 'student',
   department: '',
   branch: '',
   year: '',

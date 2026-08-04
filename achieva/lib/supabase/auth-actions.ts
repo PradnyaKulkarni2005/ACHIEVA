@@ -39,6 +39,20 @@ function getRedirectPath(role: AuthRole | string) {
   }
 }
 
+function getFriendlyAuthMessage(error: { message?: string; status?: number } | null | undefined) {
+  const message = error?.message?.toLowerCase() ?? ''
+
+  if (message.includes('rate limit') || message.includes('too many requests') || message.includes('email rate limit')) {
+    return 'Too many emails were sent recently. Please wait a few minutes and try again.'
+  }
+
+  if (message.includes('invalid login credentials') || message.includes('invalid_grant')) {
+    return 'Invalid email or password.'
+  }
+
+  return error?.message ?? 'Something went wrong. Please try again.'
+}
+
 export async function signUpAction(formData: SignupFormData) {
   const supabase = await createServerSupabaseClient()
 
@@ -57,7 +71,7 @@ export async function signUpAction(formData: SignupFormData) {
   })
 
   if (error) {
-    return { success: false, message: error.message }
+    return { success: false, message: getFriendlyAuthMessage(error) }
   }
 
   if (!data.user?.id) {
@@ -83,7 +97,7 @@ export async function signInAction(formData: { email: string; password: string }
   })
 
   if (error) {
-    return { success: false, message: error.message }
+    return { success: false, message: getFriendlyAuthMessage(error) }
   }
 
   const {
@@ -120,7 +134,7 @@ export async function resetPasswordAction(formData: { email: string }) {
   })
 
   if (error) {
-    return { success: false, message: error.message }
+    return { success: false, message: getFriendlyAuthMessage(error) }
   }
 
   return { success: true, message: 'Password reset link sent. Check your inbox.' }
